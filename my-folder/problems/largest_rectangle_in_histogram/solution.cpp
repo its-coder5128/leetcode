@@ -34,7 +34,7 @@ public:
                 s.pop();
             }
             
-            ans[i]=s.top();
+            ans[i] = s.top();
 
             s.push(i);
 

@@ -1,12 +1,8 @@
 class Solution {
 public:
     vector<vector<int>> updateMatrix(vector<vector<int>>& mat) {
-
         int n = mat.size();
         int m = mat[0].size();
-
-        vector<int> row{-1,0,1,0};
-        vector<int> col{0,1,0,-1};
 
         queue<pair<int,int>> q;
 
@@ -16,30 +12,31 @@ public:
             {
                 if(mat[i][j] == 0)
                     q.push({i,j});
-                else
-                    mat[i][j] = -1;               
+                else if(mat[i][j] == 1)
+                    mat[i][j] = -1;
             }
         }
 
+        vector<int> row = {-1,0,1,0};
+        vector<int> col = {0,1,0,-1};
+
         while(!q.empty())
         {
-            auto [i,j] = q.front();
+            auto temp = q.front();
             q.pop();
 
-            for(int k = 0;k<4;k++)
+            int mini = INT_MAX;
+            for(int i=0;i<4;i++)
             {
-                int nr = i + row[k];
-                int nc = j + col[k];
 
-                if( nr < 0 || nc < 0 || nr>=n || nc>=m || mat[nr][nc] != -1)
-                    continue;
-                else
+                int r = temp.first + row[i];
+                int c = temp.second + col[i];
+
+                if(r>=0 && c>=0 && r<n && c<m && mat[r][c] == -1)
                 {
-                    //cout<<nr<<" "<<nc<<endl;
-                    mat[nr][nc] = 1+mat[i][j];
+                    q.push({r,c});
+                    mat[r][c] = 1 + mat[temp.first][temp.second];
                 }
-                
-                q.push({nr,nc});
             }
         }
 

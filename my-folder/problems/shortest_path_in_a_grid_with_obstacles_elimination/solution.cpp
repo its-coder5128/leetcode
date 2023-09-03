@@ -1,56 +1,55 @@
 class Solution {
 public:
     int shortestPath(vector<vector<int>>& grid, int k) {
+          {
+            int m = grid.size();
+            int n = grid[0].size();
 
-        int m = grid.size();
-        int n = grid[0].size();
-        // This vector stores the number of obstacles that we can still remove after walking through that cell
-        vector<vector<int>> visited(m, vector<int>(n, -1));
+        // Further optimization
+            if(k >= m + n - 2)
+                return m + n - 2;
+        }
         
-        queue<vector<int>> q;
-        // x, y, currentLength, remaining k
-        q.push({0,0,0,k});
-        while(!q.empty()){
-            
-            auto t = q.front();
+        vector<vector<uint8_t>> seen(grid.size(), vector<uint8_t>(grid[0].size(), 0));
+        
+        struct TPos {
+            size_t PathLen = 0;
+            int X = 0;
+            int Y = 0;
+            int Budget = 0;
+        };
+        
+        std::queue<TPos> q;
+        q.push(TPos{0, 0, 0, k});
+        seen[0][0] = 1;
+        
+        while (!q.empty()) {
+            auto pos = q.front();
             q.pop();
             
-            int x = t[0], y = t[1];
+            if (pos.X == grid.size() - 1 && pos.Y == grid[0].size() - 1) {
+                return pos.PathLen;
+            }
             
-            // Invalid cases being dealt here since it's easier to write one condition instead of 4 while pushing.
-            if(x<0 || x>=m || y<0 || y>=n)
-                continue;
-            
-            // If you've reached the end, great, return the currentLength!
-            if(x == m-1 && y == n-1)
-                return t[2]; //currentLength of the path
-             
-            // If we hit an obstacle & we don't have any Ks remaining, continue
-            // If we still have Ks to spend, we spend 1.
-            if(grid[x][y] == 1){
-                if(t[3] > 0)
-                    t[3]--;
-                else
+            for (const auto& [dx, dy] : std::vector<std::pair<int, int>>{{0, 1}, {0, -1}, {1, 0}, {-1, 0}}) {
+                const auto newX = pos.X + dx;
+                const auto newY = pos.Y + dy;
+                if (newX < 0 || newX == grid.size() || newY < 0 || newY == grid[0].size()) {
                     continue;
+                }
+                const int budget = pos.Budget - grid[newX][newY];
+                if (budget < 0) {
+                    continue;
+                }
+                const int spent = k - budget + 1;
+                if (seen[newX][newY] && seen[newX][newY] <= spent) {
+                    continue;
+                }
+                seen[newX][newY] = spent;
+                q.push(TPos{pos.PathLen + 1, newX, newY, budget});
             }
-            
-            // If this cell is already visited with a K value lesser than this one, we would want to save Ks for future use, so we continue
-            // This is the most important condition and part of the solution!
-            if(visited[x][y]!=-1 && visited[x][y] >= t[3]){
-                continue;
-            }
-            
-            // We store the currentRemaining K after spending K (if required) into the visited matrix.
-            visited[x][y] = t[3];
-                
-            // Push the adjacent nodes in the queue.
-            q.push({x+1, y, t[2]+1, t[3]});
-            q.push({x-1, y, t[2]+1, t[3]});
-            q.push({x, y+1, t[2]+1, t[3]});
-            q.push({x, y-1, t[2]+1, t[3]});
         }
         
         return -1;
     }
-    
 };

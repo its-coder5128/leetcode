@@ -1,4 +1,3 @@
-
 /**
  * Definition for singly-linked list.
  * struct ListNode {
@@ -11,59 +10,33 @@
  */
 class Solution {
 public:
-    ListNode* rev(ListNode* head)
+    ListNode* removeNthFromE(ListNode* head, int& n)
     {
-        if( head == NULL)
-            return head;
-            
-        ListNode* prev=NULL;
-        ListNode* forward=head -> next;
-        
-        while(forward != NULL)
-        {
-            head -> next = prev;
-            prev = head;
-            head = forward;
-            forward = forward -> next;
-        }
-
-        head -> next = prev;;
-
-        return head;
-
-    }
-    ListNode* removeNthFromEnd(ListNode* head, int n) {
-
         if(head == NULL)
             return head;
 
-        head = rev(head);
+        head -> next = removeNthFromE(head->next,n);
+
+
+        if(n == 0)
+        {
+            ListNode* temp = head-> next;
+            head -> next = temp -> next;
+            temp -> next = NULL;
+            delete temp;
+        }
+        n--;
+
+        return  head; 
+    }
+    ListNode* removeNthFromEnd(ListNode* head, int n) {
 
         ListNode* temp = new ListNode(-1);
         temp -> next = head;
-        head = temp;
 
-        int i=1;
+        temp = removeNthFromE(temp,n);
 
-        temp = temp -> next;
-        ListNode* prev = head;
-
-        while(i<n)
-        {
-            prev = prev -> next;
-            temp = temp -> next;
-            i++;
-        }
-
-       prev -> next = temp -> next;
-       temp -> next = NULL;
-       delete(temp);
-
-        head = head -> next;
-        head = rev(head);
-
-        return head;
-
+        return temp -> next;
         
     }
 };

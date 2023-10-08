@@ -8,9 +8,8 @@ public:
                 return false;
             if(board[k][j]==c)
                 return false;
-            if(board[3*(i/3) + (k/3)][3*(j/3) + (k%3)] == c){
-                return false;
-            }
+            if(board[3*(i/3) + (k/3)][3*(j/3) + (k%3)] == c)
+                return false;  
         }
 
         return true;
@@ -43,9 +42,7 @@ public:
             return true;
     }
     void solveSudoku(vector<vector<char>>& board) {  
-        char c = '0' + 8;
-        cout<<c;
-
+  
         bool flag = solveSudoku1(board);
             
     }

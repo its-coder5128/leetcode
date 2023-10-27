@@ -1,39 +1,43 @@
 class Solution {
 public:
-    void Pali(int l,int r,int &maxi,string &ans,string &s)
+    string paliString(string &str,int i,int j)
     {
-        //cout<<"hi";
-        //ans = "hi";
-        while(l>=0 && r<s.size() && s[l]==s[r])
+        int s = i;
+        int e = j;
+
+        while(s>=0 && e<str.size() && str[s] == str[e])
         {
-            l--;
-            r++;
+            s--;
+            e++;
         }
+        s++;
+        e--;
 
-        l++;
-        r--;
-
-        int len = r-l+1;
-
-        if(maxi < len)
-        {
-            maxi = len;
-            cout<<s.substr(l,len);
-            ans = s.substr(l,len);
-        }
-
-        return;
+        return str.substr(s,e-s+1);
     }
-    string longestPalindrome(string s) {
+    string longestPalindrome(string &s) {
 
-        string ans="";
-        int maxi = -1;
+        string ans = "";
+        int maxi = 0;
 
         for(int i=0;i<s.size();i++)
         {
-            Pali(i,i,maxi,ans,s);
+            string temp1 = paliString(s,i,i);
+            string temp2 = paliString(s,i,i+1);
+            //cout<<i<<" "<<temp<<" "<<maxi<<" "<<temp.size()<<endl;
 
-            Pali(i,i+1,maxi,ans,s);
+            if(maxi<temp1.size())
+            {
+                ans = temp1;
+                //cout<<ans<<endl;
+                maxi = temp1.size();
+            }
+            if(maxi<temp2.size())
+            {
+                ans = temp2;
+                //cout<<ans<<endl;
+                maxi = temp2.size();
+            }
         }
 
         return ans;

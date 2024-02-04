@@ -1,51 +1,34 @@
 class Solution {
 public:
     string minWindow(string s, string t) {
+        vector<int> charCount('z'-'A'+1,0);
+        int requiredChars = t.size();
+        int i = 0, j = 0, minLength = INT_MAX, minStart = 0;
 
-        int i=0;
-        int j=0;
-        int mini = INT_MAX;
-
-        unordered_map<char,int> m;
-        int head=i;
-
-        for(auto x:t)
-        {
-            m[x]++;
+        for (char c : t) {
+            charCount[c - 'A']++;
         }
-        int counter = t.size();
 
-        while(j<s.size())
-        {
-            if(m[s[j]]>0)
-                counter--;
-            
-            m[s[j]]--;
+        while (j < s.size()) {
+            if (charCount[s[j]-'A'] > 0) {
+                requiredChars--;
+            }
+            charCount[s[j]-'A']--;
             j++;
 
-            if(counter == 0)
-            {
-                while(counter == 0)
-                {
-                    if(mini > j-i)
-                    {
-                        head = i;
-                        mini = j-i;
-                    }
-
-
-                    m[s[i]]++;
-                    if(m[s[i]] > 0)
-                        counter++;
-                    i++;
+            while (requiredChars == 0) {
+                if (j - i < minLength) {
+                    minLength = j - i;
+                    minStart = i;
                 }
+                charCount[s[i]-'A']++;
+                if (charCount[s[i]-'A'] > 0) {
+                    requiredChars++;
+                }
+                i++;
             }
         }
-        if(mini == INT_MAX)
-            return "";
-        
-        cout<<head<<" "<<mini<<s.substr(head,mini);
-        return s.substr(head,mini);
-        
+
+        return (minLength == INT_MAX) ? "" : s.substr(minStart, minLength);
     }
 };

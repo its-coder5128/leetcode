@@ -5,20 +5,16 @@ public:
         int s = 0;
         int e = nums.size()-1;
 
-        if(nums[0] < nums[e])
-            return nums[s];
-
-        while(s<e)
+        while(s<=e)
         {
-            int mid = s + (e-s)/2;
+            int m = s + (e-s)/2;
 
-            if(nums[mid] >= nums[0])
-                s = mid + 1;
+            if(nums[m] >= nums[0])
+                s = m + 1;
             else
-                e = mid;
+                e = m - 1;
         }
-
-        return nums[s];
+        return nums[s%nums.size()];
         
     }
 };

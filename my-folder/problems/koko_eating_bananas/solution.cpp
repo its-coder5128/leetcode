@@ -1,43 +1,34 @@
 class Solution {
 public:
-    bool possible(vector<int>& piles, int h,int k)
+    long long check(vector<int>& piles, int x)
     {
-        int cnt = 0;
-        for(int i=0;i<piles.size();i++)
+        long long ans = 0;
+
+        for(auto it:piles)
         {
-            int x = piles[i]/k;
-            if(piles[i]%k)
-                x++;
-            cnt += x;
+            ans += (long long)(it/x) + (long long)(it%x != 0);
         }
 
-        if(cnt<=h)
-            return true;
-        
-        return false;
+        return ans;
     }
+
     int minEatingSpeed(vector<int>& piles, int h) {
-
-        int maxi = -1;
-
-        for(auto num : piles)
-        {
-            maxi = max(maxi,num);
-        }
-        
         int s = 1;
-        int e = 1e9;
+        int e = 0;
 
-        while(s<e)
+        for(auto it:piles)
+            e = max(e,it);
+        
+        while(s<=e)
         {
-            int mid = s + (e-s)/2;
+            int m = s + (e-s)/2;
 
-            if(possible(piles,h,mid))
-            {
-                e = mid;
-            }
+            long long hoursTaken = check(piles,m);
+
+            if(hoursTaken > h)
+                s = m + 1;
             else
-                s = mid + 1;
+                e = m - 1;
         }
 
         return s;

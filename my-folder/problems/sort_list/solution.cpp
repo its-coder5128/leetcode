@@ -40,24 +40,23 @@ public:
     }
     ListNode* sortList(ListNode* head) {
         ListNode* slow = head;
+        ListNode* prev = nullptr;
         ListNode* fast = head;
 
         if(head == NULL || head -> next == NULL)
             return head;
 
-        while(fast -> next && fast -> next -> next)
+        while(fast && fast -> next)
         {
+            prev = slow;
             slow = slow -> next;
             fast = fast -> next -> next;
         }
-        fast = slow->next;
-        slow -> next = NULL;
-
-        if(fast == NULL)
-            return slow;
+        
+        prev -> next = NULL;
 
         ListNode* left = sortList(head);
-        ListNode* right = sortList(fast);
+        ListNode* right = sortList(slow);
 
 
         return head = merge(left,right);        

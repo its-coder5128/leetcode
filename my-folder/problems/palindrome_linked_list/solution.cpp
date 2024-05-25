@@ -23,13 +23,15 @@ public:
         return cnt;
     }
     bool isPalindrome(ListNode* head) {
+
+        if(head == nullptr || head -> next == nullptr)
+            return head;
         ListNode* fast = head;
         ListNode* slow = head;
         ListNode* prev = NULL;
         ListNode* future = head->next;
-        int cnt = nodeCNT(head);
 
-        while(fast->next && fast->next->next)
+        while(fast && fast->next)
         {
             fast = fast -> next -> next;
             slow -> next = prev;
@@ -37,13 +39,18 @@ public:
             slow = future;
             future = future -> next;
         }
-        ListNode* curr = slow -> next;
-        slow -> next = prev;
-        if(cnt&1)
-            slow = slow -> next;
+        ListNode* curr = slow;
+
+        if(fast)
+            curr = slow -> next;
+
+        slow = prev;
+
+            
 
         while(curr && slow)
         {
+            cout<<slow -> val<<" "<<curr -> val<<endl;
             if(slow -> val != curr -> val)
                 return false;
             slow = slow -> next;

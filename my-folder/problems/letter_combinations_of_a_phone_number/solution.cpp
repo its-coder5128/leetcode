@@ -1,46 +1,53 @@
 class Solution {
-private:
-    void combination(string digits,string output,int index, vector<string> coll,vector<string> &ans)
-    {
-        if(index==digits.size())
-        {
-            if(output.empty())
-            {
-                return;
-            }
-            else
-            {
-                ans.push_back(output);
-                return;
-            }
-        }
-
-        
-
-        //include
-        
-            int x=digits[index]-48-2;
-            for(int i=0;i<coll[x].size();i++)
-            {
-                output.push_back(coll[x][i]);
-                combination(digits,output,index+1,coll,ans);
-                output.pop_back();
-
-            }
-                
-            
-        
-    }
 public:
-    vector<string> letterCombinations(string digits) {
-        vector<string> coll{"abc","def","ghi","jkl","mno","pqrs","tuv","wxyz"};
-        vector<string> ans;
-        string output="";
-        int index=0;
+    void solve(string &digits,int index,vector<vector<char>>& numSet,vector<string>& ans,string& temp)
+    {
+        if(index == digits.size())
+        {
+            if(temp.size() == digits.size())
+                ans.push_back(temp);
+            return;
+        }
+        vector<int> nums(10,0);
+        for(int i = index;i<digits.size();i++)
+        {
+            int x = digits[i] - '0';
+            while(nums[x] < numSet[x].size())
+            {
+                char c = numSet[x][nums[x]];
+                nums[x]++;
+                temp.push_back(c);
+                solve(digits,i+1,numSet,ans,temp);
+                temp.erase(temp.end()-1);
+            }
 
-        combination(digits,output,index,coll,ans);
+            nums[x] = 0;
+        }
+        return;
+    }
+    vector<string> letterCombinations(string digits) {
+        vector<string> ans;
+        if(digits.size() == 0)
+            return ans;
+        
+
+        vector<vector<char>> numSet{
+            {},
+            {},
+            {'a','b','c'},
+            {'d','e','f'},
+            {'g','h','i'},
+            {'j','k','l'},
+            {'m','n','o'},
+            {'p','q','r','s'},
+            {'t','u','v'},
+            {'w','x','y','z'},
+        };
+
+        string temp = "";
+
+        solve(digits,0,numSet,ans,temp);
 
         return ans;
-
     }
 };

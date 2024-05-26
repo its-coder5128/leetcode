@@ -1,50 +1,44 @@
 class Solution {
 public:
-    bool isPali(string s)
+    bool isPali(string &str,int s,int e)
     {
-        string r=s;
-        reverse(s.begin(),s.end());
+        while(s<e)
+        {
+            if(str[s] == str[e]){
+                s++;
+                e--;
+            }
+            else
+                return false;
+        }
+        return true;
 
-        if(s==r)
-            return true;
-        else
-            return false;    
+
     }
-    void solve(string s,vector<vector<string>> &ans,vector<string> &temp,int n,int index)
-                
+    void solve(string &str,int s,vector<vector<string>> &ans,vector<string> &temp)
     {
-        if(index==n)
+        if(s == str.size())
         {
             ans.push_back(temp);
-            cout<<"BASE ";
             return;
         }
-        string aux;
-        
-        for(int i=index;i<n;i++)
+
+        for(int i = s;i<str.size();i++)
         {
-            aux.push_back(s[i]);
-            cout<<"IN "<<aux<<" ";
-            if(isPali(aux))
+            if(isPali(str,s,i))
             {
-                cout<<"INIF ";
-                temp.push_back(aux);
-                solve(s,ans,temp,n,i+1);
+                temp.push_back(str.substr(s,i-s+1));
+                solve(str,i+1,ans,temp);
                 temp.pop_back();
-                cout<<"INIFB ";
             }
-            
-
         }
-
+        return;
     }
     vector<vector<string>> partition(string s) {
-        int n=s.size();
         vector<vector<string>> ans;
         vector<string> temp;
-        
 
-        solve(s,ans,temp,n,0);
+        solve(s,0,ans,temp);
 
         return ans;
     }

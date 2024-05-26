@@ -1,44 +1,30 @@
 class Solution {
 public:
-    void solve(vector<int>& arr,int index,int tar,vector<int> &temp,vector<vector<int>> &ans)
+    void solve(vector<int>& cand,int tar,vector<vector<int>>& ans,vector<int>& temp,int index)
     {
         if(tar == 0)
         {
             ans.push_back(temp);
             return;
         }
-        if(tar < 0)
+        if(tar<0 || index == cand.size())
             return;
-
-        for(int i=index;i<arr.size();i++)
+        
+        for(int i = index;i<cand.size();i++)
         {
-            temp.push_back(arr[i]);
-            solve(arr,i,tar-arr[i],temp,ans);
+            temp.push_back(cand[i]);
+            solve(cand,tar-cand[i],ans,temp,i);
             temp.pop_back();
         }
-        
+
+        return;
     }
+    vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
+        vector<vector<int>> ans;
+        vector<int> temp;
 
+        solve(candidates,target,ans,temp,0);
 
-         vector<vector<int>> combinationSum(vector<int>& nums, int target) {
-		// dp vector to store all possible combinations of the target sum
-        vector <vector <vector <int>>> dp(target+1);
-        dp[0]={{}};
-        for(int &i:nums)
-        {
-		// Iterating through all the elements from array nums aka candidates
-            for(int j=i;j<=target;j++)
-            {
-			// Finding all possible ways to achieve sum j from element i
-                for(auto v:dp[j-i])
-                {
-                    v.push_back(i);
-                    dp[j].push_back(v);
-                }
-            }
-        }
-		// Finally, returning our ans \U0001f643
-        return dp[target];
-        
+        return ans;
     }
 };

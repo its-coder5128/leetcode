@@ -1,25 +1,22 @@
 class Solution {
 public:
     int singleNumber(vector<int>& nums) {
+        int ans = 0;
+        bool flag = true;
+        int n = nums.size();
 
-        unordered_map<int,int> m;
+        sort(nums.begin(),nums.end());
 
-        int n=nums.size();
-
-        for(int i=0;i<n;i++)
+        for(int i = 0;i<nums.size();i+=3)
         {
-            m[nums[i]]++;
-        }
-
-        for(int i=0;i<n;i++)
-        {
-            if(m[nums[i]]==1)
+            if(!(i+1 < n && nums[i] == nums[i + 1] && i+2<n && nums[i] == nums[i+2]))
             {
-                return nums[i];
+                flag = false;
+                ans = nums[i];
+                break;
             }
         }
-
-        return -1;
         
+        return ans;
     }
 };

@@ -1,14 +1,22 @@
 class Solution {
 public:
-    double solve(double x, int n)
+    double solve(double x, long n)
     {
-        if(n == 0)
-            return 1;
-        
-        if(n % 2 != 0)
-            return x*solve(x*x,n/2);
-        else
-            return solve(x*x,n/2);
+        double ans = 1;
+        while( n > 0)
+        {
+            if(n%2 == 0)
+            {
+                x = x*x;
+                n = n/2;
+            }else{
+                ans *= x;
+                x = x*x;
+                n = n/2;
+            }
+            cout<<ans<<endl;
+        }
+        return ans;
     }
     double myPow(double x, int n) {
         

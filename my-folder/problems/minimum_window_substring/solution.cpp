@@ -1,34 +1,47 @@
 class Solution {
 public:
     string minWindow(string s, string t) {
-        vector<int> charCount('z'-'A'+1,0);
-        int requiredChars = t.size();
-        int i = 0, j = 0, minLength = INT_MAX, minStart = 0;
+        int n = s.size();
+        int m = t.size();
 
-        for (char c : t) {
-            charCount[c - 'A']++;
+        vector<int> m1(256,0);
+        vector<int> m2(256,0);
+
+        for(auto c:t)
+            m2[c]++;
+        
+        int start = 0;
+        int end = -1;
+        int mini = INT_MAX;
+        int req = t.size();
+
+        int l = 0;
+        int r = 0;
+
+        while(r<n)
+        {
+            if(m2[s[r]]>0)
+                req--;
+            m2[s[r]]--;
+
+            while(req <= 0)
+            { 
+                if(mini > r - l + 1)
+                {
+                    mini = r - l + 1;
+                    start = l;
+                    end = r;
+                }
+                
+                m2[s[l]]++;
+                if(m2[s[l]] > 0)
+                    req++;
+                l++;
+            }
+            r++;
         }
 
-        while (j < s.size()) {
-            if (charCount[s[j]-'A'] > 0) {
-                requiredChars--;
-            }
-            charCount[s[j]-'A']--;
-            j++;
-
-            while (requiredChars == 0) {
-                if (j - i < minLength) {
-                    minLength = j - i;
-                    minStart = i;
-                }
-                charCount[s[i]-'A']++;
-                if (charCount[s[i]-'A'] > 0) {
-                    requiredChars++;
-                }
-                i++;
-            }
-        }
-
-        return (minLength == INT_MAX) ? "" : s.substr(minStart, minLength);
+        return s.substr(start,end-start+1);
+        
     }
 };

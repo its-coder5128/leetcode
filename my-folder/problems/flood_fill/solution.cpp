@@ -1,18 +1,42 @@
 class Solution {
 public:
-    
-    vector<vector<int>> floodFill(vector<vector<int>>& image, int sr, int sc, int newColor) {
-        int m = image.size(), n = image[0].size();
-        DFS(image, sr, sc, m, n, image[sr][sc], newColor);
+    vector<vector<int>> floodFill(vector<vector<int>>& image, int sr, int sc, int color) {
+        
+        int nColor = color;
+        color = image[sr][sc];
+
+        if(color == nColor)
+            return image;
+            
+        queue<pair<int,int>> q;
+        q.push({sr,sc});
+
+        
+        int dRow[] = {-1,0,1,0};
+        int dCol[] = {0,1,0,-1};
+
+        while(!q.empty())
+        {
+            int r = q.front().first;
+            int c = q.front().second;
+            q.pop();
+
+            image[r][c] = nColor;
+
+            for(int i = 0;i<4;i++)
+            {
+                int nRow = r + dRow[i];
+                int nCol = c + dCol[i];
+
+                if(nRow >= 0 && nCol >=0 && nRow < image.size() && nCol < image[0].size() && image[nRow][nCol] == color)
+                {
+                    q.push({nRow,nCol});
+                }
+            }
+        }
+
         return image;
-    }
-    
-    void DFS(vector<vector<int>>& image, int r, int c, int m, int n, int target, int newColor){
-        if(r < 0 || c < 0 || r == m || c == n || image[r][c] == newColor || image[r][c] != target) return;
-        image[r][c] = newColor;
-        DFS(image, r + 1, c, m, n, target, newColor);
-        DFS(image, r - 1, c, m, n, target, newColor);
-        DFS(image, r, c + 1, m, n, target, newColor);
-        DFS(image, r, c - 1, m, n, target, newColor);
+
+
     }
 };

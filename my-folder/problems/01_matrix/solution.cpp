@@ -4,43 +4,46 @@ public:
         int n = mat.size();
         int m = mat[0].size();
 
-        queue<pair<int,int>> q;
+        // vector<vector<int>> dist(n,vector<int>(m,INT_MAX));
 
-        for(int i=0;i<n;i++)
+        queue<pair<int,int>> q;
+        for(int i = 0;i<n;i++)
         {
-            for(int j=0;j<m;j++)
+            for(int j = 0;j<m;j++)
             {
                 if(mat[i][j] == 0)
-                    q.push({i,j});
-                else if(mat[i][j] == 1)
-                    mat[i][j] = -1;
-            }
-        }
-
-        vector<int> row = {-1,0,1,0};
-        vector<int> col = {0,1,0,-1};
-
-        while(!q.empty())
-        {
-            auto temp = q.front();
-            q.pop();
-
-            int mini = INT_MAX;
-            for(int i=0;i<4;i++)
-            {
-
-                int r = temp.first + row[i];
-                int c = temp.second + col[i];
-
-                if(r>=0 && c>=0 && r<n && c<m && mat[r][c] == -1)
                 {
-                    q.push({r,c});
-                    mat[r][c] = 1 + mat[temp.first][temp.second];
+                    q.push({i,j});
+                    // dist[i][j] = 0;
+                }
+                else{
+                    mat[i][j] = INT_MAX;
                 }
             }
         }
+        int dRow[] = {-1,0,1,0};
+        int dCol[] = {0,1,0,-1};
+
+        while(!q.empty())
+        {
+            int r = q.front().first;
+            int c = q.front().second;
+            q.pop();
+
+            for(int i = 0;i<4;i++)
+            {
+                int row = r + dRow[i];
+                int col = c + dCol[i];
+
+                if(row >= 0 && col >= 0 && row < n && col < m && mat[row][col] > mat[r][c] + 1)
+                {
+                    mat[row][col] = mat[r][c] + 1;
+                    q.push({row,col});
+                }
+            }
+
+        }
 
         return mat;
-        
     }
 };

@@ -1,40 +1,41 @@
 class Solution {
 public:
-    vector<int> findOrder(int n, vector<vector<int>>& pre) {
+    vector<int> findOrder(int n, vector<vector<int>>& arr) {
+        vector<int> adj[n];
 
-        unordered_map<int,list<int>> m;
-        vector<int> inDegree(n,0);
-
-        for(int i = 0;i<pre.size();i++)
+        for(int i = 0;i<arr.size();i++)
         {
-            m[pre[i][1]].push_back(pre[i][0]);
-            inDegree[pre[i][0]]++;
+            adj[arr[i][1]].push_back(arr[i][0]);
         }
+
         queue<int> q;
+        vector<int> indegree(n,0);
+        vector<int> topo;
+
         for(int i = 0;i<n;i++)
         {
-            if(inDegree[i] == 0)
-                q.push(i);
+            for(auto it:adj[i])
+                indegree[it]++;
         }
-
-        vector<int> ans;
+        for(int i = 0;i<n;i++)
+            if(indegree[i] == 0)
+                q.push(i);
 
         while(!q.empty())
         {
-            int front = q.front();
+            int node = q.front();
             q.pop();
-            ans.push_back(front);
 
-            for(auto i : m[front])
-            {
-                inDegree[i]--;
-                if(inDegree[i] == 0)
-                    q.push(i);
+            topo.push_back(node);
+
+            for(auto it:adj[node]){
+                indegree[it]--;
+                if(indegree[it] == 0)
+                    q.push(it);
             }
         }
-
-        if(ans.size() == n)
-            return ans;
+        if(topo.size() == n)
+            return topo;
         return {};
     }
 };

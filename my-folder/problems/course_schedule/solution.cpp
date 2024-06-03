@@ -1,57 +1,40 @@
 class Solution {
 public:
-    void dfs(unordered_map<int,list<int>> &adjList,vector<int> &visited,vector<int> &done,int node,bool &flag)
-    {
-        if(done[node])
-            return ;
-        
-        visited[node] = 1;
+    bool canFinish(int n, vector<vector<int>>& arr) {
+        vector<int> adj[n];
 
-        for(auto nb : adjList[node])
+        for(int i = 0;i<arr.size();i++)
         {
-            if(!visited[nb])
-            {
-                dfs(adjList,visited,done,nb,flag);
+            adj[arr[i][1]].push_back(arr[i][0]);
+        }
+
+        queue<int> q;
+        vector<int> indegree(n,0);
+        vector<int> topo;
+
+        for(int i = 0;i<n;i++)
+        {
+            for(auto it:adj[i])
+                indegree[it]++;
+        }
+        for(int i = 0;i<n;i++)
+            if(indegree[i] == 0)
+                q.push(i);
+
+        while(!q.empty())
+        {
+            int node = q.front();
+            q.pop();
+
+            topo.push_back(node);
+
+            for(auto it:adj[node]){
+                indegree[it]--;
+                if(indegree[it] == 0)
+                    q.push(it);
             }
-            else if(visited[nb] && !done[nb])
-            {
-                flag = false;
-            }
         }
 
-        if(!flag)
-            return ;
-        
-        done[node] = 1;
+        return topo.size() == n;
     }
-    bool canFinish(int numCourses, vector<vector<int>>& prerequisites) {
-        
-        unordered_map<int,list<int>> adjList;
-
-        for(int i=0;i<prerequisites.size();i++)
-        {
-            int u=prerequisites[i][0];
-            int v=prerequisites[i][1];
-
-            adjList[u].push_back(v);
-        }
-
-        vector<int> visited(numCourses,0);
-        vector<int> done(numCourses,0);
-        bool flag = true;
-
-        for(int i=0;i<numCourses;i++)
-        {
-            if(!visited[i])
-                dfs(adjList,visited,done,i,flag);
-
-            if(!flag)
-                return false;
-
-        }
-        
-        return true;
-    
-    }
-
 };

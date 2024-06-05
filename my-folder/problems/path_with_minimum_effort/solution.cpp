@@ -4,45 +4,45 @@ public:
         int n = heights.size();
         int m = heights[0].size();
 
-        vector<vector<int>> visited(n,vector<int>(m,1e6));
+        if(n == 1 && m == 1)
+            return 0;
+        
+        vector<vector<int>> vis(n,vector<int>(m,1e9));
+        priority_queue<pair<int,pair<int,int>>,vector<pair<int,pair<int,int>>>,greater<pair<int,pair<int,int>>>> q;
+        q.push({0,{0,0}});
+        vis[0][0] = 1;
 
-        vector<int> row = {-1,0,1,0};
-        vector<int> col = {0,1,0,-1};
-
-        priority_queue<vector<int>,vector<vector<int>>,greater<vector<int>>> q;
-        q.push({0,0,0,0});
+        int dRow[] = {-1,0,1,0};
+        int dCol[] = {0,1,0,-1};
 
         while(!q.empty())
         {
-            auto t = q.top();
+            int effort = q.top().first;
+            int r = q.top().second.first;
+            int c = q.top().second.second;
             q.pop();
 
-            int i = t[1];
-            int j = t[2];
-            int cost = t[0];
+            if(r == n - 1 && c == m - 1)
+                return effort;
 
-            if(i == n-1 && j == m-1)
-                return t[3];
-
-            for(int k=0;k<4;k++)
+            for(int i = 0;i<4;i++)
             {
-                int r = i + row[k];
-                int c = j + col[k];
+                int nr = r + dRow[i];
+                int nc = c + dCol[i];
 
-                if(r<0 || c<0 || r>=n || c>=m)
-                    continue; 
-
-                int toGo = abs(heights[r][c] - heights[i][j]);
-                int maxi = max(t[3],toGo);
-
-                if( visited[r][c] <= maxi)
-                    continue;
-
-                visited[r][c] = maxi;
-                q.push({toGo,r,c,maxi});
+                if(nr >= 0 && nc >= 0 && nr < n && nc < m)
+                {
+                    int maxEffort = max(effort,abs(heights[r][c] - heights[nr][nc]));
+                    if(vis[nr][nc] > maxEffort)
+                    {
+                        vis[nr][nc] = maxEffort;
+                        q.push({maxEffort,{nr,nc}});
+                    }
+                }
+                
             }
         }
 
-        return -1;
+        return vis[n-1][m-1];
     }
 };

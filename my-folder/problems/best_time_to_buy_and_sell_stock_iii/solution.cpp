@@ -1,81 +1,37 @@
 class Solution {
 public:
-    int solve(vector<int> &prices,int index,int buy,int x,vector<vector<vector<int>>> &dp)
+    int solve(vector<int>& prices,int index,int buy,int tot,vector<vector<vector<int>>> &dp)
     {
-        if(index == prices.size() || x == 0)
-        {
+        int n = prices.size();
+        if(index == n || tot == 0)  
             return 0;
-        } 
-        if(dp[index][buy][x] != -1)
-            return dp[index][buy][x];
-
-        int profit = 0;
-
+        if(dp[index][buy][tot] != -1)
+            return dp[index][buy][tot];
+        
         if(buy)
-        {
-            int take = -prices[index] + solve(prices,index+1,0,x,dp);
-            int notTake = 0 + solve(prices,index+1,1,x,dp);
-
-            profit = max(take,notTake);
-        }
-        if(!buy)
-        {
-            int take = prices[index] + solve(prices,index+1,1,x-1,dp);
-            int notTake = 0 + solve(prices,index+1,0,x,dp);
-
-            profit = max(take,notTake);
-
-        }
-
-        dp[index][buy][x]=profit;
-
-        return profit;
+            return dp[index][buy][tot] = max( - prices[index] + solve(prices,index+1,0,tot,dp), solve(prices,index+1,1,tot,dp));
+        else
+            return dp[index][buy][tot] = max( prices[index] + solve(prices,index+1,1,tot-1,dp), solve(prices,index+1,0,tot,dp));
     }
-    int solveTab(vector<int>& prices)
-    {
-        //vector<vector<vector<int>>> dp(prices.size()+1,vector<vector<int>>(2,vector<int>(3,0)));
-        vector<vector<int>> curr(2,vector<int>(3,0));
+    int maxProfit(vector<int>& prices) {
+        int n = prices.size();
+        // vector<vector<vector<int>>> dp(n+1,vector<vector<int>>(2,vector<int>(3,0)));
         vector<vector<int>> next(2,vector<int>(3,0));
+        vector<vector<int>> curr(2,vector<int>(3,0));
 
-        for(int index = prices.size()-1;index>=0;index--)
+        for(int i = n-1;i>=0;i--)
         {
-            for(int buy=1;buy>=0;buy--)
-            {
-                for(int x=2;x>=1;x--)
+                for(int k = 1;k<3;k++)
                 {
-                    int profit = 0;
+                    
+                        curr[1][k] = max( - prices[i] + next[0][k], next[1][k]);
 
-                    if(buy)
-                    {
-                        int take = -prices[index] + next[0][x];
-                        int notTake = 0 + next[1][x];
-
-                        profit = max(take,notTake);
-                    }
-                    if(!buy)
-                    {
-                        int take = prices[index] + next[1][x-1];
-                        int notTake = 0 + next[0][x];
-
-                        profit = max(take,notTake);
-
-                    }
-
-                    curr[buy][x]=profit;
+                        curr[0][k] = max( prices[i] + next[1][k-1], next[0][k]);
                 }
-
-            }
-                next = curr;
+            next = curr;
         }
 
         return next[1][2];
-    }
-    int maxProfit(vector<int>& prices) {
-
-        // vector<vector<vector<int>>> dp(prices.size(),vector<vector<int>>(2,vector<int>(3,-1)));
-        
-        // return solve(prices,0,1,2,dp);
-        return solveTab(prices);
         
     }
 };

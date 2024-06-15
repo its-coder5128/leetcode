@@ -1,37 +1,46 @@
 class Solution {
 public:
     vector<int> largestDivisibleSubset(vector<int>& nums) {
-
         sort(nums.begin(),nums.end());
+        int n = nums.size();
+        vector<int> dp(n,1);
+        vector<int> hash(n,0);
 
-        vector<int> dp(nums.size(),1);
-        int maxLen = 1;
-
-        for(int i = 1;i<nums.size();i++)
+        for(int i = 0;i<n;i++)
+            hash[i] = i;
+        
+        for(int i = 0;i<n;i++)
         {
-            for(int j = 0;j<i;j++)
+            for(int prev = 0;prev<i;prev++)
             {
-                if(nums[i] % nums[j] == 0)
-                    dp[i] = max(dp[i],dp[j] + 1);
+                if(dp[i] < dp[prev] + 1 && nums[i]%nums[prev] == 0)
+                {
+                    dp[i] = dp[prev] + 1;
+                    hash[i] = prev;    
+                }
             }
-
-            maxLen = max(maxLen,dp[i]);
         }
 
+        int maxi = 0;
+        int index = 0;
+
+        for(int i = 0;i<n;i++)
+        {
+            if(dp[i] > maxi)
+            {
+                maxi = dp[i];
+                index = i;
+            }
+        }
         vector<int> ans;
-        int prev = -1;
-
-        for(int i = nums.size() - 1;i>=0;i--)
+        while(hash[index] != index)
         {
-            if(dp[i] == maxLen && (prev == -1 || nums[prev]%nums[i] == 0))
-            {
-                ans.emplace_back(nums[i]);
-                maxLen--;
-                prev = i;
-            }
+            ans.emplace_back(nums[index]);
+            index = hash[index];
         }
+        ans.emplace_back(nums[index]);
 
         return ans;
-        
+
     }
 };

@@ -20,9 +20,25 @@ public:
         return dp[index] = sum;
     }
     int maxSumAfterPartitioning(vector<int>& arr, int k) {
-        vector<int> dp(arr.size()+1,-1);
+        int n = arr.size();
 
-        return solve(arr,k,0,dp);
+        vector<int> dp(n+1,0);
+
+        for(int index = n-1;index>=0;index--)
+        {
+            int sum = 0;
+            int maxi = INT_MIN;
+            for(int i = index;i < min(index + k, n);i++)
+            {
+                maxi = max(maxi,arr[i]);
+
+                sum = max(sum , maxi*(i-index+1) + dp[i+1]);
+            }
+
+            dp[index] = sum;
+        }
+
+        return dp[0];
         
     }
 };

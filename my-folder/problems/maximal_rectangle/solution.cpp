@@ -1,66 +1,28 @@
 class Solution {
 public:
-    vector<int> nextSmall(vector<int> arr,int n)
-    {
-        stack<int> s;
-        s.push(-1);
-
-        vector<int> ans(n);
-
-        for(int i=n-1;i>=0;i--)
-        {
-            while(s.top() != -1 && arr[s.top()] >= arr[i])
-            {
-                s.pop();
-            }
-            ans[i] = s.top();
-            s.push(i);
-        }
-
-        return ans;
-    }
-    vector<int> prevSmall(vector<int> arr,int n)
-    {
-        stack<int> s;
-        s.push(-1);
-
-        vector<int> ans(n);
-
-        for(int i=0;i<n;i++)
-        {
-            while(s.top() != -1 && arr[s.top()] >= arr[i])
-            {
-                s.pop();
-            }
-            ans[i] = s.top();
-            s.push(i);
-        }
-
-        return ans;
-    }
+   
     int maxArea(vector<int> arr,int n)
     {
-        vector<int> next(n);
-        next = nextSmall(arr,n);
-        
-        vector<int> prev(n);
-        prev = prevSmall(arr,n);
+        stack<int> s;
+        int maxArea = 0;
 
-        int mArea = INT_MIN;
-
-        for(int i=0;i<n;i++)
+        for(int i= 0;i<=n;i++)
         {
-            int l = arr[i];
+            while(!s.empty() && (i == n || arr[s.top()] >= arr[i]))
+            {
+                int h = arr[s.top()];
+                s.pop();
+                int r = i;
 
-            if(next[i] == -1)
-                next[i] = n;
-            
-            int b = next[i] - prev[i] - 1;
-
-            mArea = max(mArea,l*b);
+                int l = -1;
+                if(!s.empty())
+                    l = s.top();
+                
+                maxArea = max(maxArea,h*(r-l-1));
+            }
+            s.push(i);
         }
-
-        return mArea;
+        return maxArea;
     }
     int maximalRectangle(vector<vector<char>>& matrix) {
 

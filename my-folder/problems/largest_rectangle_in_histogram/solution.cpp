@@ -1,56 +1,69 @@
 class Solution {
 public:
-    vector<int> suffix(vector<int>& heights)
+    vector<int> prevSmaller(vector<int>& heights,int n)
     {
-        vector<int> suff(heights.size());
-
+        vector<int> ans(n,-1);
         stack<int> s;
-        s.push(heights.size());
 
-        for(int i=heights.size()-1;i>=0;i--)
+        for(int i= 0;i<n;i++)
         {
-            while(s.top() != heights.size() && heights[i] <= heights[s.top()])
+            while(!s.empty() && heights[s.top()] >= heights[i])
                 s.pop();
             
-            suff[i] = s.top();
+            if(!s.empty())
+                ans[i] = s.top();
+            
             s.push(i);
         }
-
-        return suff;
+        return ans;
     }
-    vector<int> prefix(vector<int>& heights)
+    vector<int> nextSmaller(vector<int>& heights,int n)
     {
-        vector<int> suff(heights.size());
-
+        vector<int> ans(n,n);
         stack<int> s;
-        s.push(-1);
 
-        for(int i=0;i<heights.size();i++)
+        for(int i= n-1;i>=0;i--)
         {
-            while(s.top() != -1 && heights[i] <= heights[s.top()])
+            while(!s.empty() && heights[s.top()] >= heights[i])
                 s.pop();
             
-            suff[i] = s.top();
+            if(!s.empty())
+                ans[i] = s.top();
+            
             s.push(i);
         }
-
-        return suff;
+        return ans;
     }
     int largestRectangleArea(vector<int>& heights) {
+        int n = heights.size();
+        // vector<int> left = prevSmaller(heights,n);
+        // vector<int> right = nextSmaller(heights,n);
 
-        vector<int> pref = prefix(heights);
-        vector<int> suff = suffix(heights) ;
+        int maxi = 0;
 
-        int maxi = -1;
-
-        for(int i = 0;i<heights.size();i++)
+        // for(int i = 0;i<n;i++)
+        // {
+        //     int h = heights[i];
+        //     int w = right[i] - left[i] - 1;
+        //     maxi = max(maxi,h*w);
+        // }
+        stack<int> stk;
+        for(int i = 0;i<=n;i++)
         {
-            maxi = max(maxi, (suff[i] - pref[i] - 1)*heights[i]);
+            while(!stk.empty() && (i == n || heights[stk.top()] >= heights[i]))
+            {
+                int h = heights[stk.top()];
+                stk.pop();
+                int r = i;
+                int l = -1;
+                if(!stk.empty())
+                    l = stk.top();
+                int w = r-l-1;
+                maxi = max(maxi,w*h);
+            }
+            stk.push(i);
         }
 
         return maxi;
-
-
-        
     }
 };

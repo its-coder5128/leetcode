@@ -1,104 +1,89 @@
+class Node{
+    public:
+    int key;
+    int value;
+    Node* next;
+    Node* prev;
+    Node(int x,int y){
+        key = x;
+        value = y;
+        next = NULL;
+        prev = NULL;
+    }
+};
 class LRUCache {
-    class node{
-        public:
-        int k;
-        int v;
-        node* next;
-        node* prev;
-
-        node(int key,int val)
-        {
-            k = key;
-            v = val;
-
-            next = NULL;
-            prev = NULL;
-        }
-    };
     int size;
-    unordered_map<int,node*> m;
-    node *head = new node(-1,-1);
-    node *tail = new node(-1,-1);
+    int totElements;
+    Node* first;
+    Node* last;
+    unordered_map<int,Node*> m;
+public:
+    LRUCache(int capacity) {
+        size = capacity;
+        totElements = 0;
+        first = new Node(-1,-1);
+        last = new Node(-1,-1);
 
-    void Add(node* temp)
-    {
-        temp -> next = head -> next;
-        head -> next = temp;
-        temp -> prev = head;
-        temp -> next -> prev = temp;
+        first -> next = last;
+        last -> prev = first;
     }
 
-    void Remove(node* temp)
+    void addNode(Node* temp)
     {
-        temp -> prev -> next = temp -> next;
+        temp -> next = first -> next;
+        first -> next -> prev = temp;
+        temp -> prev = first;
+        first -> next = temp;
+    }
+    void removeNode(Node* temp)
+    {
         temp -> next -> prev = temp -> prev;
+        temp -> prev -> next = temp -> next;
         temp -> next = NULL;
         temp -> prev = NULL;
         delete temp;
     }
-public:
-
-    LRUCache(int capacity) {
-        size = capacity;
-
-
-        head -> next = tail;
-        tail -> prev = head;
-    }
     
     int get(int key) {
+        if(m.find(key) == m.end())
+            return -1;
 
-        if(m.find(key) != m.end())
-        {
-            int val = m[key]->v;
+        int x = m[key] -> value;
+        removeNode(m[key]);
 
-            Remove(m[key]);
+        Node* temp = new Node(key,x);
+        m[key] = temp;
 
-            node *temp = new node(key,val);
+        addNode(temp);
 
-            m[key] = temp;
-
-            Add(temp);
-
-            return val;
-
-        }
-        return -1;
-        
+        return x;
     }
     
     void put(int key, int value) {
-
         if(m.find(key) != m.end())
         {
-            Remove(m[key]);
+            removeNode(m[key]);
 
-            node *temp = new node(key,value);
-
+            Node* temp = new Node(key,value);
             m[key] = temp;
 
-            Add(temp);
+            addNode(temp);
+            return;
         }
-        else if(m.size() == size)
+            
+        Node* temp = new Node(key,value);
+        m[key] = temp;
+
+        if(totElements == size)
         {
-            m.erase(tail -> prev -> k);
-            Remove(tail->prev);
-
-            node *temp = new node(key,value);
-
-            m[key] = temp;
-
-            Add(temp);
+            int key = last->prev->key;
+            m.erase(key);
+            totElements--;
+            removeNode(last -> prev);
         }
-        else
-        {
-            node *temp = new node(key,value);
 
-            m[key] = temp;
-
-            Add(temp);
-        }
-        
+        totElements++;
+        addNode(temp);
     }
 };
 

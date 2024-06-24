@@ -1,57 +1,53 @@
 class Solution {
 public:
     int leastInterval(vector<char>& tasks, int n) {
-        vector<int> charSet(26,0);
+        priority_queue<int> pq;
 
-        for(int i = 0;i<tasks.size();i++)
+        vector<int> m(26,0);
+
+        for(auto it:tasks)
+            m[it-'A']++;
+        
+        for(auto it:m)
         {
-            charSet[tasks[i] - 'A']++;
+            if(it != 0)
+                pq.push(it);
         }
-
-        priority_queue<int> q;
-
-        for(int i = 0;i<26;i++)
-        {
-            if(charSet[i])
-                q.push(charSet[i]);
-        }
-
+        
         int ans = 0;
 
-        while(!q.empty())
+        while(!pq.empty())
         {
-            int top = q.top()-1;
-            q.pop();
-
+            int top = pq.top();
+            pq.pop();
+            top--;
             ans++;
+            if(top == 0)
+            {
+                ans += pq.size();
+                break;
+            }
 
             vector<int> temp;
-
-            for(int i = 0;i<n&&(!q.empty());i++)
+            int size = pq.size();
+            for(int i = 0;i<min(n,size);i++)
             {
-                temp.push_back(q.top()-1);
-                q.pop();
+                if(pq.top()-1 > 0)
+                    temp.push_back(pq.top()-1);
+                pq.pop();
             }
+            ans += n;
 
-            int x = temp.size();
+            pq.push(top);
 
-            if(top)
-                q.push(top);
-
-            for(auto i : temp)
+            for(int i = 0;i<temp.size();i++)
             {
-                if(i)
-                    q.push(i);
+                if(temp[i] > 0)
+                    pq.push(temp[i]);
             }
-
-            if(q.size() == 0)
-                ans += x;
-            else{
-                ans += max(x,n);
-            }
-
         }
 
         return ans;
+
     }
 };
